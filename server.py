@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-简单的HTTP服务器，用于测试Dream App账号删除页面
+简单的HTTP/HTTPS服务器，用于测试Dream App账号删除页面
 """
 
 import http.server
 import socketserver
+import ssl
 import os
 import webbrowser
 from pathlib import Path
@@ -33,24 +34,49 @@ def main():
     os.chdir(script_dir)
     
     # 服务器配置
-    PORT = 8000
-    HOST = 'localhost'
+    PORT = 9990
+    HOST = '0.0.0.0'
     
-    # 创建服务器
-    with socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler) as httpd:
+    # HTTPS配置 - 如果需要启用HTTPS，请设置以下路径
+    USE_HTTPS = True  # 设置为True启用HTTPS
+    CERT_FILE = '/root/ssl.crt'  # SSL证书文件路径
+    KEY_FILE = '/root/ssl.key'   # SSL私钥文件路径
+    
+    # 检查是否启用HTTPS且证书文件存在
+    if USE_HTTPS and os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE):
+        # 创建HTTPS服务器
+        with socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler) as httpd:
+            # 配置SSL
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(CERT_FILE, KEY_FILE)
+            httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+            
+            server_url = f"https://{HOST}:{PORT}"
+            protocol = "HTTPS"
+    else:
+        # 创建HTTP服务器
+        httpd = socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler)
         server_url = f"http://{HOST}:{PORT}"
+        protocol = "HTTP"
+    
+    with httpd:
         
         print("="*60)
-        print("🌙 Dream App 账号删除页面服务器")
+        print(f"🌙 Dream App 账号删除页面服务器 ({protocol})")
         print("="*60)
         print(f"服务器地址: {server_url}")
         print(f"服务器端口: {PORT}")
+        print(f"协议类型: {protocol}")
         print(f"工作目录: {script_dir}")
         print("="*60)
         print("\n📝 使用说明:")
         print("1. 请在 app.js 中修改 API_BASE_URL 为您的实际API地址")
         print("2. 确保您的API服务器支持CORS跨域请求")
         print("3. 在浏览器中访问上述地址开始测试")
+        if not USE_HTTPS:
+            print("\n🔒 HTTPS配置:")
+            print("- 要启用HTTPS，请将 USE_HTTPS 设置为 True")
+            print("- 并确保 cert.pem 和 key.pem 文件存在于当前目录")
         print("\n⚠️  注意事项:")
         print("- 这是一个测试服务器，仅用于开发和测试")
         print("- 生产环境请使用专业的Web服务器")
