@@ -42,20 +42,19 @@ def main():
     CERT_FILE = '/root/ssl.crt'  # SSL证书文件路径
     KEY_FILE = '/root/ssl.key'   # SSL私钥文件路径
     
+    # 创建服务器
+    httpd = socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler)
+    
     # 检查是否启用HTTPS且证书文件存在
     if USE_HTTPS and os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE):
-        # 创建HTTPS服务器
-        with socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler) as httpd:
-            # 配置SSL
-            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            context.load_cert_chain(CERT_FILE, KEY_FILE)
-            httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
-            
-            server_url = f"https://{HOST}:{PORT}"
-            protocol = "HTTPS"
+        # 配置SSL
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(CERT_FILE, KEY_FILE)
+        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+        
+        server_url = f"https://{HOST}:{PORT}"
+        protocol = "HTTPS"
     else:
-        # 创建HTTP服务器
-        httpd = socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler)
         server_url = f"http://{HOST}:{PORT}"
         protocol = "HTTP"
     
