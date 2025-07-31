@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream App - 账号删除</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 10px;
+            width: calc(50% - 5px);
+        }
+
+        .verification-options {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .verification-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .verification-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .verification-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .user-info {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .countdown {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e1e5e9;
+            margin: 0 5px;
+            transition: background 0.3s;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+        }
+
+        .login-methods {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .login-method {
+            flex: 1;
+            padding: 20px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .login-method:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .login-method.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .login-form {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🌙 Dream</div>
+        <div class="subtitle">账号删除服务</div>
+        
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+            <div class="step-dot" id="dot3"></div>
+            <div class="step-dot" id="dot4"></div>
+        </div>
+
+        <!-- 步骤1: 登录 -->
+        <div class="step active" id="step1">
+            <h2 style="margin-bottom: 20px; color: #333;">用户登录</h2>
+            <p style="color: #666; margin-bottom: 30px;">请选择登录方式以继续删除流程</p>
+            
+            <!-- 登录方式选择 -->
+            <div class="login-methods" style="margin-bottom: 30px;">
+                <div class="login-method active" onclick="selectLoginMethod('password')" id="passwordMethod">
+                    <div style="font-size: 1.5em; margin-bottom: 5px;">🔐</div>
+                    <div><strong>密码登录</strong></div>
+                </div>
+                <div class="login-method" onclick="selectLoginMethod('email')" id="emailMethod">
+                    <div style="font-size: 1.5em; margin-bottom: 5px;">📧</div>
+                    <div><strong>邮箱验证</strong></div>
+                </div>
+                <div class="login-method" onclick="selectLoginMethod('sms')" id="smsMethod">
+                    <div style="font-size: 1.5em; margin-bottom: 5px;">📱</div>
+                    <div><strong>短信验证</strong></div>
+                </div>
+            </div>
+            
+            <!-- 密码登录表单 -->
+            <div class="login-form" id="passwordForm">
+                <div class="form-group">
+                    <label for="username">用户名/邮箱/手机号</label>
+                    <input type="text" id="username" placeholder="请输入用户名/邮箱/手机号">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码">
+                </div>
+                
+                <button class="btn" onclick="loginWithPassword()">登录</button>
+            </div>
+            
+            <!-- 邮箱验证登录表单 -->
+            <div class="login-form" id="emailForm" style="display: none;">
+                <div class="form-group">
+                    <label for="loginEmail">邮箱地址</label>
+                    <input type="email" id="loginEmail" placeholder="请输入邮箱地址">
+                </div>
+                
+                <div class="form-group" id="emailCodeGroup" style="display: none;">
+                    <label for="loginEmailCode">验证码</label>
+                    <input type="text" id="loginEmailCode" placeholder="请输入6位验证码" maxlength="6">
+                </div>
+                
+                <button class="btn" onclick="handleEmailLogin()" id="emailLoginBtn">发送验证码</button>
+                
+                <div style="margin-top: 15px; display: none;" id="emailResendSection">
+                    <span>没有收到验证码？</span>
+                    <button type="button" style="background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline;" onclick="resendEmailCode()" id="emailResendBtn">
+                        重新发送 <span class="countdown" id="emailCountdown"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 短信验证登录表单 -->
+            <div class="login-form" id="smsForm" style="display: none;">
+                <div class="form-group">
+                    <label for="loginPhone">手机号码</label>
+                    <input type="tel" id="loginPhone" placeholder="请输入手机号码">
+                </div>
+                
+                <div class="form-group" id="smsCodeGroup" style="display: none;">
+                    <label for="loginSmsCode">验证码</label>
+                    <input type="text" id="loginSmsCode" placeholder="请输入6位验证码" maxlength="6">
+                </div>
+                
+                <button class="btn" onclick="handleSmsLogin()" id="smsLoginBtn">发送验证码</button>
+                
+                <div style="margin-top: 15px; display: none;" id="smsResendSection">
+                    <span>没有收到验证码？</span>
+                    <button type="button" style="background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline;" onclick="resendSmsCode()" id="smsResendBtn">
+                        重新发送 <span class="countdown" id="smsCountdown"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤2: 确认删除 -->
+        <div class="step" id="step2">
+            <h2 style="margin-bottom: 20px; color: #333;">确认删除账号</h2>
+            
+            <div class="user-info" id="userInfo">
+                <!-- 用户信息将在这里显示 -->
+            </div>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ 重要提醒</strong><br>
+                删除账号后，您的所有数据将被永久删除且无法恢复，包括：<br>
+                • 个人资料和设置<br>
+                • 积分余额<br>
+                • 历史记录<br>
+                • 所有相关数据
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-secondary" onclick="logout()">取消</button>
+                <button class="btn btn-danger" onclick="showVerificationStep()">确认删除</button>
+            </div>
+        </div>
+
+        <!-- 步骤3: 选择验证方式 -->
+        <div class="step" id="step3">
+            <h2 style="margin-bottom: 20px; color: #333;">选择验证方式</h2>
+            <p style="color: #666; margin-bottom: 30px;">为了确保账号安全，请选择验证方式</p>
+            
+            <div class="verification-options">
+                <div class="verification-option" onclick="selectVerification('email')" id="emailOption">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📧</div>
+                    <div><strong>邮箱验证</strong></div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">发送验证码到邮箱</div>
+                </div>
+                <div class="verification-option" onclick="selectVerification('sms')" id="smsOption">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📱</div>
+                    <div><strong>短信验证</strong></div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">发送验证码到手机</div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="sendVerificationCode()" id="sendCodeBtn" disabled>发送验证码</button>
+        </div>
+
+        <!-- 步骤4: 输入验证码 -->
+        <div class="step" id="step4">
+            <h2 style="margin-bottom: 20px; color: #333;">输入验证码</h2>
+            <p style="color: #666; margin-bottom: 30px;" id="verificationHint">验证码已发送到您的邮箱/手机</p>
+            
+            <div class="form-group">
+                <label for="verificationCode">验证码</label>
+                <input type="text" id="verificationCode" placeholder="请输入6位验证码" maxlength="6">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <span>没有收到验证码？</span>
+                <button type="button" style="background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline;" onclick="resendCode()" id="resendBtn">
+                    重新发送 <span class="countdown" id="countdown"></span>
+                </span>
+            </div>
+            
+            <button class="btn btn-danger" onclick="deleteAccount()">确认删除账号</button>
+        </div>
+
+        <!-- 成功页面 -->
+        <div class="step" id="stepSuccess">
+            <div style="font-size: 4em; margin-bottom: 20px;">✅</div>
+            <h2 style="margin-bottom: 20px; color: #333;">账号删除成功</h2>
+            <p style="color: #666; margin-bottom: 30px;">您的账号已被成功删除。感谢您使用Dream App。</p>
+            <button class="btn" onclick="window.location.reload()">返回首页</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
