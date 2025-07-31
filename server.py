@@ -39,8 +39,8 @@ def main():
     
     # HTTPS配置 - 如果需要启用HTTPS，请设置以下路径
     USE_HTTPS = True  # 设置为True启用HTTPS
-    CERT_FILE = '/root/ssl.crt'  # SSL证书文件路径
-    KEY_FILE = '/root/ssl.key'   # SSL私钥文件路径
+    CERT_FILE = '/root/cert.pem'  # SSL证书文件路径
+    KEY_FILE = '/root/privkey.pem'   # SSL私钥文件路径
     
     # 创建服务器
     httpd = socketserver.TCPServer((HOST, PORT), CustomHTTPRequestHandler)
