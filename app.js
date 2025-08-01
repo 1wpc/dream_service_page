@@ -1,5 +1,5 @@
 // API配置
-const API_BASE_URL = 'http://neuronx.top:8000'; // 请替换为实际的API域名
+const API_BASE_URL = 'https://neuronx.top:8000'; // 请替换为实际的API域名
 
 // 全局变量
 let currentUser = null;
